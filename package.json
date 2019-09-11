@@ -1,0 +1,21 @@
+{
+  "name": "MMM-MagicHome-Lights",
+  "version": "1.0.0",
+  "description": "A simple module to control Magic Home wifi ligths using notifications",
+  "main": "MMM-MagicHome-Lights.js",
+  "keywords": [
+    "magic mirror",
+    "module",
+    "smart mirror",
+    "magic home",
+    "led strip"
+  ],
+  "author": "nishitp",
+  "license": "MIT",
+  "bugs": {
+    "url": ""
+  },
+  "dependencies": {
+    "magic-home": "^2.0.4"
+  }
+}
