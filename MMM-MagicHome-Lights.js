@@ -23,8 +23,8 @@ Module.register("MMM-MagicHome-Lights", {
     ],
 
     notifications: {
-      PAUSE: "HOTWORD_RESUME",
-      RESUME: "HOTWORD_PAUSE",
+      AL_PAUSE: "HOTWORD_RESUME",
+      AL_RESUME: "HOTWORD_PAUSE",
       SLEEPING : "MH_LIGTHS_SLEEPING",
       ERROR : "MH_LIGTHS_ERROR",
     },

@@ -47,19 +47,19 @@ module.exports = NodeHelper.create({
         this.initializeAfterLoading(payload)
         this.sendSocketNotification('INITIALIZED')
         break
-      case 'RESUME':
+      case 'AL_RESUME':
         if (this.status == 'OFF') {
           this.status = 'ON'
-          this.activate()
+          this.activate_assistant_lights()
           this.sendSocketNotification('RESUMED')
         } else {
           this.sendSocketNotification('NOT_RESUMED')
         }
         break
-      case 'PAUSE':
+      case 'AL_PAUSE':
         if (this.status == 'ON') {
           this.status = 'OFF'
-          this.deactivate()
+          this.deactivate_assistant_lights()
           this.sendSocketNotification('PAUSED')
         } else {
           this.sendSocketNotification('NOT_PAUSED')
@@ -68,14 +68,14 @@ module.exports = NodeHelper.create({
     }
   },
 
-  activate: function() {
+  activate_assistant_lights: function() {
     console.log("[MH-Lights] Activating...");
     var light = new Control(this.light_address);
     light.turnOn();
     light.setCustomPattern(assistant_active_pattern, 100)
   },
 
-  deactivate: function() {
+  deactivate_assistant_lights: function() {
     var light = new Control(this.light_address);
     light.turnOff();
     this.status = 'OFF'
