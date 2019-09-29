@@ -46,11 +46,11 @@ Module.register("MMM-MagicHome-Lights", {
           this.sendSocketNotification('RESUME')
         }
         break
-      case this.config.notifications.RESUME:
-        this.sendSocketNotification('RESUME')
+      case this.config.notifications.AL_RESUME:
+        this.sendSocketNotification('AL_RESUME')
         break
-      case this.config.notifications.PAUSE:
-        this.sendSocketNotification('PAUSE')
+      case this.config.notifications.AL_PAUSE:
+        this.sendSocketNotification('AL_PAUSE')
         break
     }
   },
