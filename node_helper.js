@@ -24,11 +24,12 @@ module.exports = NodeHelper.create({
     this.restart = false
   },
 
-  initializeAfterLoading: function(config) {
+  initializeAfterLoading: async function(config) {
     this.config = config
     this.restart = this.config.autorestart
     this.initPatterns()
-    this.getLightAddress()
+    await this.getLightAddress()
+    this.deactivate_lights()
   },
 
   initPatterns: function() {
@@ -56,10 +57,19 @@ module.exports = NodeHelper.create({
           this.sendSocketNotification('NOT_RESUMED')
         }
         break
+      case 'HL_RESUME':
+        if (this.status == 'OFF') {
+          this.status = 'ON'
+          this.activate_hotword_lights()
+          this.sendSocketNotification('RESUMED')
+        } else {
+          this.sendSocketNotification('NOT_RESUMED')
+        }
+        break
       case 'AL_PAUSE':
         if (this.status == 'ON') {
           this.status = 'OFF'
-          this.deactivate_assistant_lights()
+          this.deactivate_lights()
           this.sendSocketNotification('PAUSED')
         } else {
           this.sendSocketNotification('NOT_PAUSED')
@@ -68,29 +78,48 @@ module.exports = NodeHelper.create({
     }
   },
 
-  activate_assistant_lights: function() {
-    console.log("[MH-Lights] Activating...");
-    var light = new Control(this.light_address);
-    light.turnOn();
-    light.setCustomPattern(assistant_active_pattern, 100)
-  },
 
-  deactivate_assistant_lights: function() {
+  deactivate_lights: function() {
     var light = new Control(this.light_address);
+    console.log("[MH-Lights] Lights deactivating...");
     light.turnOff();
     this.status = 'OFF'
   },
 
-  getLightAddress: function() {
+  activate_assistant_lights: function() {
+    console.log("[MH-Lights] Assistant lights activating...");
+    var light = new Control(this.light_address);
+    light.turnOn();
+    light.setCustomPattern(assistant_active_pattern, 90)
+  },
+
+  activate_hotword_lights: function() {
+    console.log("[MH-Lights] Hotword lights activating...");
+    var light = new Control(this.light_address);
+    light.turnOn();
+    light.setCustomPattern(hotword_active_pattern, 90)
+  },
+
+
+  getLightAddress: async function() {
     if (this.config.light_address == 'DISCOVER') {
       var disc = new Discovery();
-      disc.scan(2000, function(err, devices) {
-        console.log(devices);
-        this.light_address = devices[0].address;
-      });
+      var device = null;
+      var retry = 10;
+      while (device == null && retry > 0){
+        await disc.scan(1000, function(err, devices) {
+          if(devices.length != 0) {
+            console.log("[MH-Lights]Found following MagicHome devices.");
+            console.log(devices);
+            device = devices[0].address;
+          }
+        }).then().catch();
+        retry--;
+      }
+      this.light_address = device;
     } else {
       this.light_address = this.config.light_address;
-      console.log("[MH-Lights] light_address = " + this.light_address)
     }
+    console.log("[MH-Lights] light_address = " + this.light_address)
   },
 })
